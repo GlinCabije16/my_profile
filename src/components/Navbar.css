@@ -4,8 +4,10 @@
   justify-content: space-between;
   align-items: center;
   padding: 15px 30px;
-  background-color: #001d48ff;
+  background-color: rgb(0, 65, 161);
   color: #fff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: large;
   position: sticky;
   top: 0;
   z-index: 100;
@@ -25,7 +27,7 @@
 }
 
 .links a:hover {
-  color: #535bf2;
+  color: #00089a;
 }
 
 /* Hamburger menu */

@@ -9,13 +9,18 @@ export default function Journal() {
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
-        background: "linear-gradient(135deg, #000000ff, #001d48ff, #7d000fff)", // Blue → White → Red
+        backgroundImage: "url('/images/background.png')",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",    
         padding: "40px 20px",
         textAlign: "center",
       }}
     >
       <h1 style={{ fontSize: "3rem", marginBottom: "20px" , color: "#ffff", fontFamily: '-apple-system'}}>Welcome to My Portfolio</h1>
-     
+      <p style={{ fontSize: "1.2rem", marginBottom: "40px", maxWidth: "600px",color: "#ffff" }}>
+        Here you will find my school experiences, my projects,reflections, and achievements.
+      </p>
 
       <Link
         to="/about"

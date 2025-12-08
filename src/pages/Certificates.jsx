@@ -21,7 +21,10 @@ export default function Certificates() {
       style={{
         minHeight: "100vh",
         padding: "80px 20px",
-        background: "linear-gradient(135deg, #000000ff, #001d48ff, #7d000fff)",
+        backgroundImage: "url('/images/background.png')",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover",    
         color: "#fff",
         display: "flex",
         flexDirection: "column",
