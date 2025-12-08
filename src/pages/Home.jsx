@@ -24,8 +24,8 @@ export default function Journal() {
         to="/about"
         style={{
           padding: "12px 24px",
-          backgroundColor: "#510000ff",
-          color: "#fff",
+          backgroundColor: "#ffffffff",
+          color: "#020202ff",
           fontWeight: "bold",
           borderRadius: "8px",
           textDecoration: "none",
@@ -33,7 +33,7 @@ export default function Journal() {
           transition: "background-color 0.3s",
         }}
         onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#3f46d1")}
-        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#440000ff")}
+        onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "#ffffffff")}
       >
         About Me
       </Link>
