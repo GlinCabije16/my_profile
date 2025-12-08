@@ -18,9 +18,7 @@ export default function Journal() {
       }}
     >
       <h1 style={{ fontSize: "3rem", marginBottom: "20px" , color: "#ffff", fontFamily: '-apple-system'}}>Welcome to My Portfolio</h1>
-      <p style={{ fontSize: "1.2rem", marginBottom: "40px", maxWidth: "600px",color: "#ffff" }}>
-        Here you will find my school experiences, my projects,reflections, and achievements.
-      </p>
+    
 
       <Link
         to="/about"
