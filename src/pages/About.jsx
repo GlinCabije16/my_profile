@@ -1,103 +1,176 @@
-import Card from "../components/Card";
-
+import { useEffect, useRef } from "react";
+import { FaBasketballBall, FaLaptopCode, FaGraduationCap } from "react-icons/fa";
 
 export default function About() {
   const aboutCards = [
     {
-      title: "Hobby",
-      description: "I love playing basketball, playing guitar, painting, and exploring technology.",
-      images: ["/images/hobby1.jpg","/images/basket.png"],
+      title: "Hobbies",
+      icon: <FaBasketballBall size={50} color="#90e0ef" />,
+      content: "Basketball • Guitar • Digital Art • Learning New Tech",
     },
     {
-      title: "Language",
-      description: "JAVA, REACT, DJANGO, PYTHON, C#, C++, PHP, JAVASCRIPT.",
-      images: ["/images/language.jpg"],
+      title: "Languages",
+      icon: <FaLaptopCode size={50} color="#90e0ef" />,
+      content: "JavaScript • React • Node.js • Django • SQL",
     },
     {
       title: "Education",
-      description: "Bachelor in Science in Information Technology at Holy Cross of Davao College.",
-      images: ["/images/logo.png"],
+      icon: <FaGraduationCap size={50} color="#90e0ef" />,
+      content: "BSIT - Holy Cross of Davao College",
     },
   ];
 
+  const sectionRef = useRef(null);
+
+  useEffect(() => {
+    const elements = sectionRef.current.querySelectorAll(".fade-in");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = 1;
+            entry.target.style.transform = "translateY(0)";
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+    elements.forEach((el) => observer.observe(el));
+    return () => elements.forEach((el) => observer.unobserve(el));
+  }, []);
+
   return (
-    
     <div
+      id="about"
+      ref={sectionRef}
       style={{
-        minHeight: "100vh",
-        padding: "80px 20px",
-        backgroundImage: "url('/images/background.png')",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        backgroundSize: "cover",    
-        color: "#ffffffff",
+        width: "100vw",
+        height: "100vh",
+        fontFamily: "'Inter', sans-serif",
+        color: "#fff",
+         background: "linear-gradient(135deg, rgb(255,32,78), rgb(160,21,62), rgb(93,14,65), rgb(0,34,77))",
         display: "flex",
-        flexDirection: "column",
+        justifyContent: "center",
         alignItems: "center",
       }}
     >
-      {/* Side-by-side main section */}
       <div
         style={{
           display: "flex",
-          flexWrap: "wrap",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "50px",
-          maxWidth: "1200px",
-          marginBottom: "60px",
+          width: "95%",
+          height: "90%",
+          boxShadow: "0 25px 80px rgba(0,0,0,0.5)",
+          borderRadius: "15px",
+          overflow: "hidden",
         }}
       >
-        {/* Profile picture */}
-        <img
-          src="/images/profile.jpg"
-          alt="My Profile"
+        {/* Left Page */}
+        <div
+          className="fade-in"
           style={{
-            width: "500px",
-            height: "500px",
-            borderRadius: "50%",
-            objectFit: "-moz-initial",
-            border: "5px solid #fff",
-            boxShadow: "0 8px 15px rgba(0,0,0,0.3)",
+            flex: "0 0 40%",
+             background: "linear-gradient(135deg, rgb(0,34,77), rgb(160,21,62), rgb(93,14,65), rgb(0,34,77))",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            padding: "40px",
+            borderRight: "6px solid #0e2a55",
+          }}
+        >
+          <img
+            src="/images/image.jpg"
+            alt="Profile"
+            style={{
+              width: "100%",
+              height: "100%",
+               borderRadius: "95% 95% 90% 20%",
+              objectFit: "cover",
+              boxShadow: "0 20px 60px rgba(0,0,0,0.4)",
+            }}
+          />
+        </div>
+
+        {/* Spine */}
+        <div
+          style={{
+            width: "12px",
+            backgroundColor: "#0e2a55",
+            boxShadow: "inset 0 0 10px rgba(0,0,0,0.4)",
           }}
         />
 
-        {/* About Me text */}
-        <div style={{ maxWidth: "600px" }}>
-          <h1 style={{ fontSize: "3rem", marginBottom: "20px" , fontFamily:'-apple-system'}}>About Me</h1>
-          <p
+        {/* Right Page */}
+        <div
+          className="fade-in"
+          style={{
+            flex: "0 0 60%",
+          background: "linear-gradient(135deg, rgb(255,32,78), rgb(160,21,62), rgb(93,14,65), rgb(0,34,77))",
+            padding: "40px",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+          }}
+        >
+          {/* About Text */}
+          <div style={{ textAlign: "justify", maxWidth: "800px", marginBottom: "50px" }}>
+            <h1 style={{ fontSize: "3.5rem", fontWeight: "700" }}>About Me</h1>
+            <p style={{ fontSize: "1.2rem", lineHeight: "1.8", color: "#e0e0e0" }}>
+              Hi! I'm <strong>Angeline A. Cabije</strong>, an <strong>Aspiring Fullstack Developer</strong> passionate about building modern, scalable web applications and solving challenging problems.
+            </p>
+          </div>
+
+          {/* Creative Cards */}
+          <div
             style={{
-              fontSize: "1.25rem",
-              lineHeight: "1.8",
-              color: "#ffffffff",
-              maxWidth: "600px",
-              margin: "0 auto",
-              textAlign: "left",
-              fontFamily: "'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif",
+              display: "flex",
+              gap: "25px",
+              width: "80%",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+           
             }}
           >
-           <span style={{fontFamily:"-apple-system"}}> Hi! I'm Angeline A. Cabije, a BSIT student at Holy Cross of Davao College, with a passion for learning, exploring new technologies , and building creative web and software projects.<br /><br />
-            My technical skills include: </span><span style={{ fontWeight: "600",fontFamily:"-apple-system", color: "#dd1b1bff" }}>Java, REACT, PHP, Django, C#, C++, JavaScript</span>.<span style={{fontFamily:"-apple-system"}}> I enjoy applying these skills to develop projects, solve challenging problems, and collaborate on innovative solutions.<br /><br />
-            Outside of academics, I love basketball, playing guitar, painting, discovering new technologies, and sharing knowledge with others.</span>
-          </p>
+            {aboutCards.map((card, index) => (
+              <div
+                key={index}
+                style={{
+                  flex: "1 1 1%",
+                  minWidth: "100px",
+                  height: "200px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  borderRadius: "20px",
+                  backgroundColor: "#0b2a55",
+                  boxShadow: "0 15px 50px rgba(0,0,0,0.4)",
+                  padding: "20px",
+                  textAlign: "center",
+                  transition: "transform 0.3s, box-shadow 0.3s",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "scale(1.05)";
+                  e.currentTarget.style.boxShadow = "0 20px 60px rgba(0,0,0,0.6)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "scale(1)";
+                  e.currentTarget.style.boxShadow = "0 15px 50px rgba(0,0,0,0.4)";
+                }}
+              >
+                <div style={{ marginBottom: "15px" }}>{card.icon}</div>
+                <h2 style={{ fontSize: "1.5rem", marginBottom: "10px" }}>{card.title}</h2>
+                <p style={{ fontSize: "1.1rem", color: "#ccc" }}>{card.content}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      {/* Cards Section */}
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-          gap: "25px",
-          width: "100%",
-          maxWidth: "1200px",
-          justifyItems: "center",
-        }}
-      >
-        {aboutCards.map((card, index) => (
-          <Card key={index} {...card} />
-        ))}
-      </div>
+      <style>{`
+        .fade-in { opacity: 0; transform: translateY(30px); transition: all 1s ease-out; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+      `}</style>
     </div>
   );
 }
