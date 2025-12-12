@@ -22,10 +22,9 @@ export default function AboutCubeGlass() {
   const dragStart = useRef({ x: 0, y: 0, rotX: 0, rotY: 0 });
 
   const [pulse, setPulse] = useState(0);
-  const [speed, setSpeed] = useState(0.2); // slow spinning
-  
+  const [speed, setSpeed] = useState(0.2);
 
-  // Typing effect for details
+  // Typing effect
   useEffect(() => {
     let currentDetail = 0;
     let currentIndex = 0;
@@ -43,10 +42,8 @@ export default function AboutCubeGlass() {
         currentDetail++;
         currentIndex = 0;
       }
-
       if (currentDetail >= details.length) clearInterval(interval);
     }, 40);
-
     return () => clearInterval(interval);
   }, []);
 
@@ -116,7 +113,7 @@ export default function AboutCubeGlass() {
   };
   const handleMouseUp = () => setDragging(false);
 
-  // Cube pulse effect
+  // Cube pulse
   useEffect(() => {
     let pulseValue = 0;
     const interval = setInterval(() => {
@@ -134,12 +131,10 @@ export default function AboutCubeGlass() {
     return () => clearInterval(interval);
   }, [speed]);
 
-  // Break cube on mount, then allow normal interaction
+  // Break cube on mount
   useEffect(() => {
-    setCubeBroken(true); // immediately break on mount
-    const timer = setTimeout(() => {
-      setCubeBroken(false); // after 1.5s, return to normal state
-    }, 1500);
+    setCubeBroken(true);
+    const timer = setTimeout(() => setCubeBroken(false), 1500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -158,6 +153,7 @@ export default function AboutCubeGlass() {
         overflow: "hidden",
         gap: "40px",
         padding: "40px",
+        flexWrap: "wrap",
       }}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -166,18 +162,11 @@ export default function AboutCubeGlass() {
       {/* Background diamonds */}
       <canvas
         ref={canvasRef}
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          zIndex: 0,
-        }}
+        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 0 }}
       />
 
       {/* Left Details */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "20px", zIndex: 3, position: "relative" }}>
+      <div style={{ flex: 1, minWidth: "280px", display: "flex", flexDirection: "column", gap: "20px", zIndex: 3, position: "relative" }}>
         {details.slice(0, 2).map((section, i) => (
           <div
             key={i}
@@ -207,7 +196,14 @@ export default function AboutCubeGlass() {
 
       {/* Center Cube */}
       <div
-        style={{ perspective: "1500px", width: "300px", height: "300px", zIndex: 2 }}
+        style={{
+          perspective: "1500px",
+          width: "300px",
+          height: "300px",
+          zIndex: 2,
+          minWidth: "220px",
+          minHeight: "220px",
+        }}
         onMouseEnter={() => setSpeed(1)}
         onMouseLeave={() => setSpeed(0.2)}
         onClick={() => setCubeBroken(!cubeBroken)}
@@ -255,6 +251,8 @@ export default function AboutCubeGlass() {
                   position: "absolute",
                   width: "300px",
                   height: "300px",
+                  maxWidth: "90vw",
+                  maxHeight: "90vw",
                   backgroundImage: "url('/images/image.jpg')",
                   backgroundSize: "cover",
                   backgroundPosition: "center",
@@ -271,7 +269,7 @@ export default function AboutCubeGlass() {
       </div>
 
       {/* Right Details */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: "20px", zIndex: 3, position: "relative" }}>
+      <div style={{ flex: 1, minWidth: "280px", display: "flex", flexDirection: "column", gap: "20px", zIndex: 3, position: "relative" }}>
         {details.slice(2).map((section, i) => (
           <div
             key={i}
@@ -298,6 +296,23 @@ export default function AboutCubeGlass() {
           </div>
         ))}
       </div>
+
+      <style>{`
+        @media (max-width: 1024px) {
+          h2 { font-size: 1.3rem !important; }
+          div[style*='width: 300px'] { width: 250px !important; height: 250px !important; }
+        }
+        @media (max-width: 768px) {
+          section#about { flex-direction: column; gap: 30px; padding: 20px; }
+          div[style*='flex:1'] { width: 100% !important; }
+          div[style*='width: 300px'] { width: 220px !important; height: 220px !important; }
+        }
+        @media (max-width: 480px) {
+          h2 { font-size: 1.1rem !important; }
+          div[style*='width: 300px'] { width: 180px !important; height: 180px !important; }
+          div[style*='flex:1'] { padding: 10px; }
+        }
+      `}</style>
     </section>
   );
 }

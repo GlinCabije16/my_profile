@@ -19,7 +19,7 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
-  // Floating diamonds background with mouse interaction
+  // Floating diamonds background
   useEffect(() => {
     const canvas = document.getElementById("particleCanvas");
     const ctx = canvas.getContext("2d");
@@ -48,7 +48,6 @@ export default function Home() {
         this.rotation = Math.random() * 360;
         this.rotationSpeed = (Math.random() - 0.5) * 0.5;
       }
-
       draw() {
         ctx.save();
         ctx.translate(this.x, this.y);
@@ -57,16 +56,12 @@ export default function Home() {
         ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
         ctx.restore();
       }
-
       update() {
-        // Movement with mouse parallax
         const dx = (this.x - mouse.x) * 0.0005;
         const dy = (this.y - mouse.y) * 0.0005;
         this.x += this.speedX + dx;
         this.y += this.speedY + dy;
         this.rotation += this.rotationSpeed;
-
-        // Wrap around edges
         if (this.x < 0) this.x = canvas.width;
         if (this.x > canvas.width) this.x = 0;
         if (this.y < 0) this.y = canvas.height;
@@ -140,9 +135,7 @@ export default function Home() {
       >
         {/* Left Text */}
         <div style={{ flex: "1", minWidth: "300px" }}>
-          <h3 style={{ fontSize: "1.8rem", margin: 0, color: "#1cbcc1ff" }}>
-            Hi, I'm
-          </h3>
+          <h3 style={{ fontSize: "1.8rem", margin: 0, color: "#1cbcc1ff" }}>Hi, I'm</h3>
           <h1
             style={{
               fontSize: "4rem",
@@ -153,13 +146,7 @@ export default function Home() {
           >
             Angeline A. Cabije
           </h1>
-          <h2
-            style={{
-              fontSize: "1.6rem",
-              fontWeight: "600",
-              color: "#95d7ebff",
-            }}
-          >
+          <h2 style={{ fontSize: "1.6rem", fontWeight: "600", color: "#95d7ebff" }}>
             {typedText}
             <span
               style={{
@@ -184,14 +171,6 @@ export default function Home() {
               boxShadow: "0 8px 25px rgba(0,0,0,0.4)",
               marginTop: "20px",
             }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "scale(1.05)";
-              e.currentTarget.style.boxShadow = "0 12px 30px rgba(0,255,255,0.6)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "scale(1)";
-              e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.4)";
-            }}
           >
             Explore ↓
           </button>
@@ -212,13 +191,26 @@ export default function Home() {
             let rotate;
             const depth = 130;
             switch (face) {
-              case "front": rotate = `rotateY(0deg) translateZ(${depth}px)`; break;
-              case "back": rotate = `rotateY(180deg) translateZ(${depth}px)`; break;
-              case "left": rotate = `rotateY(-90deg) translateZ(${depth}px)`; break;
-              case "right": rotate = `rotateY(90deg) translateZ(${depth}px)`; break;
-              case "top": rotate = `rotateX(90deg) translateZ(${depth}px)`; break;
-              case "bottom": rotate = `rotateX(-90deg) translateZ(${depth}px)`; break;
-              default: rotate = "";
+              case "front":
+                rotate = `rotateY(0deg) translateZ(${depth}px)`;
+                break;
+              case "back":
+                rotate = `rotateY(180deg) translateZ(${depth}px)`;
+                break;
+              case "left":
+                rotate = `rotateY(-90deg) translateZ(${depth}px)`;
+                break;
+              case "right":
+                rotate = `rotateY(90deg) translateZ(${depth}px)`;
+                break;
+              case "top":
+                rotate = `rotateX(90deg) translateZ(${depth}px)`;
+                break;
+              case "bottom":
+                rotate = `rotateX(-90deg) translateZ(${depth}px)`;
+                break;
+              default:
+                rotate = "";
             }
             return (
               <div
@@ -250,10 +242,25 @@ export default function Home() {
           0%,100% { opacity: 1; }
           50% { opacity: 0; }
         }
-        @media (max-width: 850px) {
-          h1 { font-size: 3rem !important; }
-          div[style*='width: 360px'] { width: 260px !important; height: 260px !important; }
+        @media (max-width: 1024px) {
+          h1 { font-size: 3.2rem !important; }
+          h2 { font-size: 1.4rem !important; }
+          h3 { font-size: 1.6rem !important; }
+          div[style*='width: 360px'] { width: 280px !important; height: 280px !important; margin-top: 40px; }
           div[style*='width: 230px'] { width: 180px !important; height: 180px !important; }
+          div[style*='flex: 1'] { text-align: center; }
+        }
+        @media (max-width: 768px) {
+          div[style*='flex-wrap: wrap'] { flex-direction: column-reverse; gap: 40px; align-items: center; }
+          button { padding: 14px 30px; font-size: 1rem; }
+        }
+        @media (max-width: 480px) {
+          h1 { font-size: 2.5rem !important; }
+          h2 { font-size: 1.1rem !important; }
+          h3 { font-size: 1.3rem !important; }
+          div[style*='width: 360px'] { width: 220px !important; height: 220px !important; }
+          div[style*='width: 230px'] { width: 150px !important; height: 150px !important; }
+          button { padding: 12px 25px; font-size: 0.95rem; }
         }
       `}</style>
     </div>
