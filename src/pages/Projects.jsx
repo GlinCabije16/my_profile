@@ -1,200 +1,294 @@
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
-export default function Projects() {
-  const projects = [
+export default function FeaturedProjects() {
+  const projects = [ 
     {
       title: "BARANGAY INFORMATION SYSTEM",
-      description: "Streamline requests, resident records, and document processing.",
-      images: ["/images/PROJECT1.png"],
+      description: "Streamlined request handling, resident profiles, and document processing.",
+      image: "/images/PROJECT1.png",
       link: "https://github.com/GlinCabije16/Project_BIS",
     },
     {
       title: "Event Scheduler",
-      description: "Django-based event planner for scheduling and tracking events.",
-      images: ["/images/project2.png"],
+      description: "A Django-based scheduling and event management tool.",
+      image: "/images/project2.png",
       link: "https://github.com/GlinCabije16/event_scheduler",
     },
     {
       title: "Mental Health Chatbot",
-      description: "C# application providing supportive chat for well-being.",
-      images: ["/images/project3.png"],
+      description: "A C# AI chatbot providing emotional and mental support.",
+      image: "/images/project3.png",
       link: "https://github.com/GlinCabije16/MentalHealthChatbot",
     },
   ];
 
-  const trackRef = useRef(null);
-  const cardRefs = useRef([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [rotation, setRotation] = useState(projects.map(() => 0));
+  const [speed, setSpeed] = useState(projects.map(() => 0.2)); // slow default spin
+  const [typedText, setTypedText] = useState("");
+  const heading = "Featured Projects";
 
-  const prev = () => setCurrentIndex((i) => Math.max(0, i - 1));
-  const next = () => setCurrentIndex((i) => Math.min(projects.length - 1, i + 1));
+  const cubeRef = useRef([]);
+  const canvasRef = useRef(null);
 
+  // Initial random break offsets for animation
+  const [offsets, setOffsets] = useState(
+    projects.map(() => ({
+      x: (Math.random() - 0.5) * 200,
+      y: (Math.random() - 0.5) * 200,
+      z: (Math.random() - 0.5) * 200,
+    }))
+  );
+
+  // Typewriter effect for heading
   useEffect(() => {
-    if (!trackRef.current || !cardRefs.current[currentIndex]) return;
-    const card = cardRefs.current[currentIndex];
-    const track = trackRef.current;
-    const left = card.offsetLeft + card.offsetWidth / 2 - track.offsetWidth / 2;
-    track.scrollTo({ left, behavior: "smooth" });
-  }, [currentIndex]);
+    let index = 0;
+    const interval = setInterval(() => {
+      setTypedText(heading.slice(0, index + 1));
+      index++;
+      if (index >= heading.length) index = 0;
+    }, 150);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Cube rotation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setRotation((prev) => prev.map((r, i) => r + speed[i]));
+    }, 16);
+    return () => clearInterval(interval);
+  }, [speed]);
+
+  // Animate initial break apart to center
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setOffsets(projects.map(() => ({ x: 0, y: 0, z: 0 })));
+    }, 500); // delay before cubes return
+    return () => clearTimeout(timeout);
+  }, []);
+
+  // Floating diamonds background
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    let diamonds = [];
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    class Diamond {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = 10 + Math.random() * 15;
+        this.opacity = 0.05 + Math.random() * 0.2;
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.fillStyle = `rgba(0, 255, 255, ${this.opacity})`;
+        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+        ctx.restore();
+      }
+    }
+
+    const initDiamonds = () => {
+      diamonds = [];
+      for (let i = 0; i < 80; i++) diamonds.push(new Diamond());
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      diamonds.forEach((d) => d.draw());
+      requestAnimationFrame(animate);
+    };
+
+    initDiamonds();
+    animate();
+    return () => window.removeEventListener("resize", resizeCanvas);
+  }, []);
 
   return (
-    <section
-      id="projects"
+    <section id="projects"
       style={{
-        width: "100vw",
+        width: "100%",
         minHeight: "100vh",
-        background: "linear-gradient(135deg, rgb(255,32,78), rgb(160,21,62), rgb(93,14,65), rgb(0,34,77))",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        padding: "40px 20px",
+        background: "linear-gradient(135deg, #0b2833, #021c27)",
         fontFamily: "'Poppins', sans-serif",
-        
-        color: "#ffffffff",
+        color: "#fff",
+        gap: "60px",
+        padding: "40px",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
+      {/* Floating diamonds background */}
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: 0,
+        }}
+      />
 
-      <div style={{
-        display: "flex",
-        width: "95%",
-        maxWidth: "1400px",
-        gap: "50px",
-        alignItems: "center",
-      }}>
-        
-        {/* LEFT SECTION */}
-        <div style={{ flex: 1, textAlign: "center" }}>
-          <h2 style={{
-            fontSize: "3.1rem",
-            marginBottom: "50px",
-            fontWeight: "800",
-          }}>
-            Featured Projects
-          </h2>
+      {/* Heading */}
+      <h2
+        style={{
+          position: "absolute",
+          top: "100px",
+          fontSize: "3rem",
+          fontWeight: 800,
+          letterSpacing: "2px",
+          fontFamily:"-apple-system",
+          color: "#eff8f8ff",
+          zIndex: 2,
+          textShadow: "0 0 8px #00ffff, 0 0 15px #00ffff",
+        }}
+      >
+        {typedText}
+      </h2>
 
-          <div style={{ position: "relative" }}>
+      {/* Left: Cubes */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "40px", zIndex: 1 }}>
+        {projects.map((project, i) => (
+          <div
+            key={i}
+            onClick={() => setSelectedIndex(i)}
+            onMouseEnter={() =>
+              setSpeed((prev) => prev.map((s, idx) => (idx === i ? 1 : s)))
+            }
+            onMouseLeave={() =>
+              setSpeed((prev) => prev.map((s, idx) => (idx === i ? 0.2 : s)))
+            }
+            style={{
+              width: "150px",
+              height: "150px",
+              perspective: "800px",
+              cursor: "pointer",
+            }}
+          >
             <div
-              ref={trackRef}
+              ref={(el) => (cubeRef.current[i] = el)}
               style={{
-                display: "flex",
-                gap: "40px",
-                overflowX: "hidden",
-                paddingBottom: "20px",
+                width: "100%",
+                height: "100%",
+                position: "relative",
+                transformStyle: "preserve-3d",
+                transform: `translate3d(${offsets[i].x}px, ${offsets[i].y}px, ${offsets[i].z}px) rotateY(${rotation[i]}deg)`,
+                transition: "transform 1.5s ease-out",
               }}
             >
-              {projects.map((project, i) => (
-                <div
-                  key={i}
-                  ref={(el) => (cardRefs.current[i] = el)}
-                  style={{
-                    flex: "0 0 auto",
-                    width: "300px",
-                   background: "linear-gradient(135deg, rgb(255,32,78), rgb(160,21,62), rgb(93,14,65), rgb(0,34,77))",
-                    borderRadius: "18px",
-                    overflow: "hidden",
-                    border: i === currentIndex ? "2px solid #f5f5f5ff" : "2px solid transparent",
-                    transform: i === currentIndex ? "scale(1.07)" : "scale(0.9)",
-                    opacity: i === currentIndex ? 1 : 0.5,
-                    transition: "all 0.4s ease",
-                    cursor: "pointer",
-                  }}
-                  onClick={() => setCurrentIndex(i)}
-                >
-                  <img
-                    src={project.images[0]}
-                    alt={project.title}
-                    style={{
-                      width: "100%",
-                      height: "160px",
-                      objectFit: "cover",
-                      transition: "0.3s ease",
-                    }}
-                  />
-
-                  <div style={{ padding: "18px" }}>
-                    <h3 style={{ marginBottom: "10px", fontWeight: "700" }}>
-                      {project.title}
-                    </h3>
-                    <p style={{ fontSize: "0.9rem", opacity: 0.85, color: "#fdfdfdff" }}>
-                      {project.description}
-                    </p>
-
-                    <a
-                      href={project.link}
-                      target="_blank"
-                      rel="noreferrer"
+              {["front", "back", "left", "right", "top", "bottom"].map(
+                (face, idx) => {
+                  let depth = 75;
+                  let rotate;
+                  switch (face) {
+                    case "front":
+                      rotate = `rotateY(0deg) translateZ(${depth}px)`;
+                      break;
+                    case "back":
+                      rotate = `rotateY(180deg) translateZ(${depth}px)`;
+                      break;
+                    case "left":
+                      rotate = `rotateY(-90deg) translateZ(${depth}px)`;
+                      break;
+                    case "right":
+                      rotate = `rotateY(90deg) translateZ(${depth}px)`;
+                      break;
+                    case "top":
+                      rotate = `rotateX(90deg) translateZ(${depth}px)`;
+                      break;
+                    case "bottom":
+                      rotate = `rotateX(-90deg) translateZ(${depth}px)`;
+                      break;
+                  }
+                  return (
+                    <div
+                      key={idx}
                       style={{
-                        display: "inline-block",
-                        marginTop: "14px",
-                        padding: "10px 18px",
+                        position: "absolute",
+                        width: "100%",
+                        height: "100%",
                         borderRadius: "10px",
-                        background: "#5266ffff",
-                        fontWeight: "700",
-                        color: "#ffffffff",
-                        textDecoration: "none",
-                        transition: "0.25s ease",
+                        backgroundImage: `url(${project.image})`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        border: "1px solid #ffffffff",
+                        boxShadow: "0 0 8px #00ffff inset, 0 0 15px #00ffff",
+                        transform: rotate,
+                        transition: "all 0.3s",
                       }}
-                      onMouseEnter={(e) => e.target.style.background = "#0074e1ff"}
-                      onMouseLeave={(e) => e.target.style.background = "#dd0000ff"}
-                    >
-                      View GitHub
-                    </a>
-                  </div>
-                </div>
-              ))}
+                    />
+                  );
+                }
+              )}
             </div>
-
-            {/* ARROWS */}
-            <button style={arrowStyle("left")} onClick={prev}>⬅</button>
-            <button style={arrowStyle("right")} onClick={next}>➜</button>
           </div>
-        </div>
-
-        {/* IMAGE RIGHT */}
-        <div style={{ flex: 0.7, display: "flex", justifyContent: "center" }}>
-          <img
-            src="/images/image.jpg"
-            alt="Tech"
-            style={{
-              width: "90%",
-              maxHeight: "600px",
-              objectFit: "cover",
-              borderRadius: "50% 30% 50% 30%",
-              filter: "grayscale(20%)",
-              transition: "0.5s ease",
-            }}
-            onMouseEnter={(e) => e.target.style.filter = "grayscale(0%)"}
-            onMouseLeave={(e) => e.target.style.filter = "grayscale(20%)"}
-          />
-        </div>
-
+        ))}
       </div>
 
-      {/* RESPONSIVE */}
-      <style>{`
-        @media (max-width: 960px) {
-          #projects > div {
-            flex-direction: column;
-          }
-        }
-      `}</style>
-
+      {/* Right: Project Details */}
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          gap: "20px",
+          maxWidth: "600px",
+          background: "rgba(255,255,255,0.05)",
+          backdropFilter: "blur(20px) saturate(180%)",
+          borderRadius: "20px",
+          padding: "40px",
+          border: "1px solid rgba(0,255,255,0.2)",
+          boxShadow: "0 10px 30px rgba(0,255,255,0.2)",
+          transition: "all 0.3s",
+          zIndex: 1,
+        }}
+      >
+        <h3
+          style={{
+            fontSize: "2rem",
+            fontWeight: 700,
+            fontFamily:"-apple-system",
+            color: "#ffffffff",
+          }}
+        >
+          {projects[selectedIndex].title}
+        </h3>
+        <p style={{ fontSize: "1rem", lineHeight: "1.6", opacity: 0.9 }}>
+          {projects[selectedIndex].description}
+        </p>
+        <a
+          href={projects[selectedIndex].link}
+          target="_blank"
+          rel="noreferrer"
+          style={{
+            marginTop: "20px",
+            padding: "12px 20px",
+            borderRadius: "10px",
+            textDecoration: "none",
+            color: "#fff",
+            background: "rgba(0, 255, 255, 0.2)",
+            fontWeight: 700,
+            width: "fit-content",
+            boxShadow: "0 0 8px rgba(0,255,255,0.2)",
+            transition: "all 0.3s",
+          }}
+        >
+          View GitHub
+        </a>
+      </div>
     </section>
   );
 }
-
-const arrowStyle = (side) => ({
-  position: "absolute",
-  [side]: "-40px",
-  top: "50%",
-  transform: "translateY(-50%)",
-  background: "#ffffffff",
-  color: "#222831",
-  border: "none",
-  padding: "10px 14px",
-  borderRadius: "50%",
-  cursor: "pointer",
-  fontSize: "1.15rem",
-  fontWeight: "bold",
-  transition: "0.3s ease",
-});

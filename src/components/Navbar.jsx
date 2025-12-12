@@ -1,7 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function Navbar() {
   const [active, setActive] = useState("home");
+
+  const navItems = [
+    { id: "home", label: "Home" },
+    { id: "about", label: "About" },
+    { id: "projects", label: "Projects" },
+    { id: "tours", label: "Tours" },
+    { id: "journal", label: "Journal" },
+    { id: "certificates", label: "Certificates" },
+    { id: "contact", label: "Contact" },
+  ];
 
   const scrollToSection = (id) => {
     const section = document.getElementById(id);
@@ -11,15 +21,26 @@ export default function Navbar() {
     }
   };
 
-  const navItems = [
-    { id: "home", label: "Home" },
-    { id: "about", label: "About" },
-    { id: "projects", label: "Projects" },
-    { id: "certificates", label: "Certificates" },
-    { id: "tours", label: "Tours" },
-    { id: "journal", label: "Journal" },
-    { id: "contact", label: "Contact" },
-  ];
+  // Observe sections to update active nav link
+  useEffect(() => {
+    const handleScroll = () => {
+      let current = "home"; // default section
+      navItems.forEach((item) => {
+        const section = document.getElementById(item.id);
+        if (section) {
+          const top = section.getBoundingClientRect().top;
+          if (top <= window.innerHeight / 2) {
+            current = item.id;
+          }
+        }
+      });
+      setActive(current);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    handleScroll(); // set initial active section
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
     <nav
@@ -31,7 +52,7 @@ export default function Navbar() {
         padding: "20px 50px",
         zIndex: 200,
         display: "flex",
-        justifyContent: "flex-end",
+        justifyContent: "center",
         background: "rgba(0, 0, 0, 0.25)",
         backdropFilter: "blur(12px)",
         boxShadow: "0 4px 20px rgba(0,0,0,0.25)",

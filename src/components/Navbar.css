@@ -27,7 +27,7 @@
 }
 
 .links a:hover {
-  color: #00089a;
+  color: #ffffff;
 }
 
 /* Hamburger menu */
@@ -78,7 +78,7 @@
   }
 
   .links a {
-    margin-left: 0; /* remove desktop horizontal spacing */
+  /* remove desktop horizontal spacing */
     font-size: 1.2rem;
     display: block;
   }

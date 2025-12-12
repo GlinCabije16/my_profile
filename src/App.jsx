@@ -15,9 +15,9 @@ export default function App() {
       <Home />
       <About />
       <Projects />
-      <Certificates />
       <Tours />
       <Journal />
+      <Certificates />
       <Contact />
     </div>
   );

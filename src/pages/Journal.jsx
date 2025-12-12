@@ -1,96 +1,204 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { FaFacebookF, FaEnvelope, FaPhoneAlt } from "react-icons/fa";
 
 export default function Journal() {
-  const journalEntries = [
-    { title: "World Tech", subtitle: "WorldTech Information Solution", caption: "Professional journal entry on tech innovations.", image: "/images/worldtechjournal.jpg" },
-    { title: "CodeChump", subtitle: "Cebu Branch", caption: "Insights and projects from CodeChump.", image: "/images/codechumjournal.jpg" },
-    { title: "Rivan IT Cebu", subtitle: "IT Solutions", caption: "Journal documenting Rivan IT’s achievements.", image: "/images/rivantjournal.jpg" },
-    { title: "Mata", subtitle: "Technology Provider", caption: "Corporate technology solutions journal.", image: "/images/matajournal.jpg" },
-    { title: "T.A.R.S.I.E.R. 117", subtitle: "Emergency Response", caption: "Documentation of T.A.R.S.I.E.R. 117 activities.", image: "/images/tarsierjournal.jpg" },
+  const journalByDay = [
+    {
+      day: "Day 1",
+      entries: [
+        {
+          title: "World Tech",
+          subtitle: "WorldTech Information Solution",
+          caption: "Professional journal entry on tech innovations.",
+          learnings: "Learned how emerging technologies impact global markets.",
+          observations: "Observed key trends in AI and cloud computing adoption.",
+          image: "/images/worldtechjournal.jpg",
+        },
+      ],
+    },
+    {
+      day: "Day 2",
+      entries: [
+        {
+          title: "CodeChump",
+          subtitle: "Cebu Branch",
+          caption: "Insights and projects from CodeChump.",
+          learnings: "Learned agile workflows and collaborative coding practices.",
+          observations: "Noted how team communication impacts project delivery.",
+          image: "/images/codechumjournal.jpg",
+        },
+        {
+          title: "Rivan IT Cebu",
+          subtitle: "IT Solutions",
+          caption: "Journal documenting Rivan IT’s achievements.",
+          learnings: "Gained experience in IT support and client management.",
+          observations: "Observed the importance of user experience in software.",
+          image: "/images/rivantjournal.jpg",
+        },
+      ],
+    },
+    {
+      day: "Day 3",
+      entries: [
+        {
+          title: "Mata",
+          subtitle: "Technology Provider",
+          caption: "Corporate technology solutions journal.",
+          learnings:
+            "Learned integration of enterprise solutions in corporate environments.",
+          observations:
+            "Observed strategic planning and implementation processes.",
+          image: "/images/matajournal.jpg",
+        },
+      ],
+    },
+    {
+      day: "Day 4",
+      entries: [
+        {
+          title: "T.A.R.S.I.E.R. 117",
+          subtitle: "Emergency Response",
+          caption: "Documentation of T.A.R.S.I.E.R. 117 activities.",
+          learnings:
+            "Gained understanding of emergency response coordination.",
+          observations:
+            "Noted the importance of rapid decision-making and teamwork.",
+          image: "/images/tarsierjournal.jpg",
+        },
+      ],
+    },
   ];
 
   const [zoomedImg, setZoomedImg] = useState(null);
-  const [loaded, setLoaded] = useState(false);
+  const canvasRef = useRef(null);
 
-  // Trigger staggered animation after mount
+  // Floating diamonds background
   useEffect(() => {
-    setLoaded(true);
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    let diamonds = [];
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    class Diamond {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = 5 + Math.random() * 10;
+        this.speed = 0.2 + Math.random() * 0.5;
+        this.opacity = 0.05 + Math.random() * 0.15;
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(Math.random() * Math.PI / 4);
+        ctx.fillStyle = `rgba(0,255,255,${this.opacity})`;
+        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+        ctx.restore();
+        this.y -= this.speed;
+        if (this.y < -this.size) this.reset();
+      }
+    }
+
+    const initDiamonds = () => {
+      diamonds = [];
+      for (let i = 0; i < 80; i++) diamonds.push(new Diamond());
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      diamonds.forEach((d) => d.draw());
+      requestAnimationFrame(animate);
+    };
+
+    initDiamonds();
+    animate();
+    return () => window.removeEventListener("resize", resizeCanvas);
   }, []);
 
   return (
     <section
-    id="journal"
+      id="journal"
       style={{
-        width: "100vw",
+        width: "100%",
         minHeight: "100vh",
-        padding: "60px 40px",
-        background: "linear-gradient(135deg, rgb(255,32,78), rgb(160,21,62), rgb(93,14,65), rgb(0,34,77))",
+        padding: "60px 20px",
+        background: "#0b2833",
         fontFamily: "'Roboto', sans-serif",
         color: "#fff",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
-      <h1 style={{ fontSize: "5rem", marginBottom: "20px", fontFamily:"-apple-system" }}>Journal</h1>
-      <p style={{ maxWidth: "800px", textAlign: "center", marginBottom: "40px", color: "#ccc" }}>
-        Explore my journal entries documenting my experiences, reflections, and achievements during my academic and professional journey.
+      {/* Floating diamonds canvas */}
+      <canvas
+        ref={canvasRef}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: 0,
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* HEADER */}
+      <h1
+        style={{
+          fontSize: "3rem",
+          textAlign: "center",
+          fontWeight: 700,
+          marginBottom: "10px",
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        Professional Journal
+      </h1>
+
+      <p
+        style={{
+          maxWidth: "850px",
+          margin: "0 auto 50px",
+          textAlign: "center",
+          color: "#bbb",
+          fontSize: "1.1rem",
+          position: "relative",
+          zIndex: 1,
+        }}
+      >
+        My Journal Entries from Various Companies
       </p>
 
+      {/* 4-COLUMN RESPONSIVE GRID */}
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-          gap: "30px",
+          gridTemplateColumns: "repeat(auto-fit, minmax(330px, 1fr))",
+          gap: "40px",
           width: "100%",
-          maxWidth: "1200px",
+          maxWidth: "1600px",
+          margin: "0 auto",
+          position: "relative",
+          zIndex: 1,
         }}
       >
-        {journalEntries.map((entry, i) => (
-          <div
-            key={i}
-            onClick={() => setZoomedImg(entry.image)}
-            style={{
-              background: "linear-gradient(145deg, #f5f5f5, #e0e0e0)",
-              color: "#222831",
-              borderRadius: "12px",
-              overflow: "hidden",
-              cursor: "pointer",
-              display: "flex",
-              flexDirection: "column",
-              boxShadow: "0 8px 25px rgba(0,0,0,0.15)",
-              transform: loaded ? "translateY(0) scale(1)" : "translateY(20px) scale(0.95)",
-              opacity: loaded ? 1 : 0,
-              transition: `all 0.6s ease ${i * 0.15}s`, // staggered delay
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = "translateY(-5px) scale(1.03) rotate(-1deg)";
-              e.currentTarget.style.boxShadow = "0 15px 35px rgba(0,0,0,0.25)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = "translateY(0) scale(1)";
-              e.currentTarget.style.boxShadow = "0 8px 25px rgba(0,0,0,0.15)";
-            }}
-          >
-            <img
-              src={entry.image}
-              alt={entry.title}
-              style={{
-                width: "100%",
-                height: "180px",
-                objectFit: "cover",
-              }}
-            />
-            <div style={{ padding: "15px" }}>
-              <h3 style={{ fontSize: "1.3rem", fontWeight: 700, marginBottom: "5px" }}>{entry.title}</h3>
-              <h4 style={{ fontSize: "1rem", fontWeight: 500, color: "#555", marginBottom: "10px" }}>{entry.subtitle}</h4>
-              <p style={{ fontSize: "0.95rem", color: "#666" }}>{entry.caption}</p>
-            </div>
-          </div>
+        {journalByDay.map((day, i) => (
+          <DayColumn key={i} day={day} setZoomedImg={setZoomedImg} />
         ))}
       </div>
 
-      {/* Zoom Overlay */}
+      {/* IMAGE ZOOM OVERLAY */}
       {zoomedImg && (
         <div
           onClick={() => setZoomedImg(null)}
@@ -104,8 +212,8 @@ export default function Journal() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            zIndex: 9999,
             cursor: "zoom-out",
+            zIndex: 9999,
           }}
         >
           <img
@@ -115,11 +223,129 @@ export default function Journal() {
               maxWidth: "80%",
               maxHeight: "80%",
               borderRadius: "12px",
-              boxShadow: "0 0 40px rgba(0,0,0,0.5)",
+              boxShadow: "0 0 50px rgba(0,0,0,0.5)",
             }}
           />
         </div>
       )}
+
+      <style>
+        {`
+          @keyframes floatCard {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-7px); }
+            100% { transform: translateY(0px); }
+          }
+
+          .journal-card:hover {
+            transform: translateY(-10px) scale(1.03);
+            box-shadow: 0 18px 35px rgba(0,0,0,0.35);
+          }
+
+          .journal-card:hover .journal-img {
+            filter: brightness(1.2);
+            transform: scale(1.05);
+          }
+        `}
+      </style>
     </section>
+  );
+}
+
+/* ========================= */
+/* DAY COLUMN */
+/* ========================= */
+function DayColumn({ day, setZoomedImg }) {
+  const isDay2 = day.day === "Day 2";
+
+  return (
+    <div
+      style={{
+        background: "rgba(255,255,255,0.04)",
+        padding: "25px",
+        borderRadius: "14px",
+        boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
+        backdropFilter: "blur(12px)",
+      }}
+    >
+      <h2
+        style={{
+          fontSize: "1.7rem",
+          color: "#3fa9f5",
+          borderBottom: "2px solid #3fa9f5",
+          paddingBottom: "6px",
+          marginBottom: "20px",
+        }}
+      >
+        {day.day}
+      </h2>
+
+      {/* Day 2 → 2 columns */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: isDay2 ? "1fr 1fr" : "1fr",
+          gap: "20px",
+        }}
+      >
+        {day.entries.map((entry, j) => (
+          <JournalCard
+            key={j}
+            entry={entry}
+            setZoomedImg={setZoomedImg}
+            delay={j * 0.15}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ========================= */
+/* JOURNAL CARD */
+/* ========================= */
+function JournalCard({ entry, setZoomedImg, delay }) {
+  return (
+    <div
+      onClick={() => setZoomedImg(entry.image)}
+      className="journal-card"
+      style={{
+        background: "rgba(255,255,255,0.06)",
+        borderRadius: "12px",
+        overflow: "hidden",
+        cursor: "pointer",
+        boxShadow: "0 10px 25px rgba(0,0,0,0.25)",
+        backdropFilter: "blur(16px)",
+        transition:
+          "transform 0.35s ease, box-shadow 0.35s ease, filter 0.35s ease",
+        animation: `floatCard 4s ease-in-out ${delay}s infinite`,
+      }}
+    >
+      <img
+        src={entry.image}
+        alt={entry.title}
+        className="journal-img"
+        style={{
+          width: "100%",
+          height: "200px",
+          objectFit: "cover",
+          transition: "0.35s ease",
+        }}
+      />
+
+      <div style={{ padding: "16px" }}>
+        <h3 style={{ fontSize: "1.15rem", fontWeight: 700 }}>{entry.title}</h3>
+        <h4 style={{ fontSize: "0.9rem", color: "#ccc" }}>{entry.subtitle}</h4>
+
+        <p style={{ fontSize: "0.85rem", marginTop: "8px" }}>{entry.caption}</p>
+
+        <p style={{ fontSize: "0.8rem", marginTop: "10px" }}>
+          <strong>Learnings:</strong> {entry.learnings}
+        </p>
+        <p style={{ fontSize: "0.8rem" }}>
+          <strong>Observations:</strong> {entry.observations}
+        </p>
+      </div>
+    </div>
   );
 }

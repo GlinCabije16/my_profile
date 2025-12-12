@@ -1,184 +1,277 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
-export default function ToursSlider() {
+export default function ToursDynamicSlider() {
   const tours = [
-    { title: "Code-chump Cebu Visit", image: "/images/code-chump.jpg" },
-    { title: "Tarshier Bohol Tour", image: "/images/tarshier.jpg" },
-    { title: "RIVAN IT CEBU VISIT", image: "/images/Rivant IT.jpg" },
-    { title: "Loboc River Tour", image: "/images/loboc.jpg" },
-    { title: "Chocolate Hills Tour", image: "/images/chocolate hills.jpg" },
-    { title: "Santo Nino Church Tour", image: "/images/santonio.jpg" },
-    { title: "Baclayon Church Tour", image: "/images/baclayon.jpg" },
-    { title: "Mirror of the World Tour", image: "/images/mirror of the world.jpg" },
+    { title: "Code-chump Cebu Visit", image: "/images/code-chump.jpg", location: "Cebu" },
+    { title: "RIVAN IT CEBU VISIT", image: "/images/Rivant IT.jpg", location: "Cebu" },
+    { title: "Santo Nino Church Tour", image: "/images/santonio.jpg", location: "Cebu" },
+    { title: "Baclayon Church Tour", image: "/images/baclayon.jpg", location: "Bohol" },
+    { title: "Tarshier Bohol Tour", image: "/images/tarshier.jpg", location: "Bohol" },
+    { title: "Loboc River Tour", image: "/images/loboc.jpg", location: "Bohol" },
+    { title: "Chocolate Hills Tour", image: "/images/chocolate hills.jpg", location: "Bohol" },
+    { title: "Mirror of the World Tour", image: "/images/mirror of the world.jpg", location: "Bohol" },
   ];
 
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [zoomed, setZoomed] = useState(false);
+  const [zoomed, setZoomed] = useState(null);
+  const canvasRef = useRef(null);
 
-  const nextSlide = () => currentIndex < tours.length - 1 && setCurrentIndex((i) => i + 1);
-  const prevSlide = () => currentIndex > 0 && setCurrentIndex((i) => i - 1);
+  // Floating diamonds
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    let diamonds = [];
+
+    const resizeCanvas = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+
+    class Diamond {
+      constructor() {
+        this.reset();
+      }
+      reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = 5 + Math.random() * 10;
+        this.speed = 0.2 + Math.random() * 0.5;
+        this.opacity = 0.05 + Math.random() * 0.15;
+      }
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(Math.random() * Math.PI / 4);
+        ctx.fillStyle = `rgba(0,255,255,${this.opacity})`;
+        ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size);
+        ctx.restore();
+        this.y -= this.speed;
+        if (this.y < -this.size) this.reset();
+      }
+    }
+
+    const initDiamonds = () => {
+      diamonds = [];
+      for (let i = 0; i < 80; i++) diamonds.push(new Diamond());
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      diamonds.forEach((d) => d.draw());
+      requestAnimationFrame(animate);
+    };
+
+    initDiamonds();
+    animate();
+    return () => window.removeEventListener("resize", resizeCanvas);
+  }, []);
+
+  const renderMarquee = (sectionTours, direction = "left", speed = 35) => {
+    const animationName = direction === "left" ? "scrollLeft" : "scrollRight";
+
+    return (
+      <div id="tours" style={{ overflow: "hidden", width: "100%", position: "relative" }}>
+        <div
+          className={`marquee ${animationName}`}
+          style={{
+            display: "flex",
+            gap: "30px",
+            padding: "20px 0",
+            alignItems: "center",
+            animationDuration: `${speed}s`,
+          }}
+        >
+          {[...sectionTours, ...sectionTours].map((tour, i) => (
+            <div
+              key={i}
+              onClick={() => setZoomed(tour.image)}
+              style={{
+                flex: "0 0 auto",
+                width: "280px",
+                height: "380px",
+                background: "rgba(255,255,255,0.08)",
+                borderRadius: "20px",
+                border: "1px solid rgba(255,255,255,0.2)",
+                backdropFilter: "blur(20px) saturate(180%)",
+                WebkitBackdropFilter: "blur(20px) saturate(180%)",
+                boxShadow: "0 15px 40px rgba(0,0,0,0.3), 0 0 20px rgba(0,229,255,0.15)",
+                cursor: "pointer",
+                transition: "transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "flex-start",
+                padding: "10px",
+              }}
+            >
+              <img
+                src={tour.image}
+                alt={tour.title}
+                style={{
+                  width: "100%",
+                  height: "75%",
+                  objectFit: "cover",
+                  borderRadius: "15px",
+                  marginBottom: "12px",
+                  boxShadow: "0 8px 25px rgba(0,0,0,0.3)",
+                  transition: "transform 0.3s ease",
+                }}
+              />
+              <h3
+                style={{
+                  textAlign: "center",
+                  fontWeight: 600,
+                  color: "#DFDB8",
+                  fontSize: "1.1rem",
+                }}
+              >
+                {tour.title}
+              </h3>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <section
-      id="tours"
       style={{
         minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "linear-gradient(135deg, rgb(255,32,78), rgb(160,21,62), rgb(93,14,65), rgb(0,34,77))",
         padding: "50px 20px",
         fontFamily: "'Poppins', sans-serif",
-        color: "#ffffffff",
+        background: "#0b2833",
+        color: "#fff",
         position: "relative",
+        overflow: "hidden",
       }}
     >
-      {/* Slider Container */}
-      <div
+      {/* Canvas for floating diamonds */}
+      <canvas
+        ref={canvasRef}
         style={{
-          width: "90%",
-          maxWidth: "1200px",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: "20px",
-          position: "relative",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: 0,
+          pointerEvents: "none",
         }}
-      >
-        {/* Left Arrow */}
-        <button
-          onClick={prevSlide}
-          disabled={currentIndex === 0}
-          style={arrowStyle("left", currentIndex === 0)}
+      />
+
+      {/* Cebu Section */}
+      <div style={{ marginBottom: "80px", position: "relative", zIndex: 1 }}>
+        <h2
+          style={{
+            fontSize: "2rem",
+            marginBottom: "30px",
+            textAlign: "center",
+            color: "#DFDB8",
+            fontWeight: "700",
+          }}
         >
-          ◀
-        </button>
+          Cebu Tours
+        </h2>
+        {renderMarquee(
+          tours.filter((t) => t.location === "Cebu"),
+          "left",
+          35
+        )}
+      </div>
 
-        {/* Cards Wrapper */}
-        <div style={{ flex: 1, display: "flex", justifyContent: "center", perspective: "1200px" }}>
-          {tours.map((tour, i) => {
-            const offset = i - currentIndex;
-            const scale = i === currentIndex ? 1 : 0.8;
-            const opacity = i === currentIndex ? 1 : 0.5;
-            const rotateY = offset * 15;
-
-            return (
-              <div
-                key={i}
-                onClick={() => setZoomed(true)}
-                style={{
-                  position: offset === 0 ? "relative" : "absolute",
-                  left: offset * 50 + "px",
-                  width: "300px",
-                  height: "450px",
-                  background: "rgba(255,255,255,0.05)",
-                  borderRadius: "20px",
-                  boxShadow: "0 15px 50px rgba(0,0,0,0.6)",
-                  cursor: "pointer",
-                  padding: "10px",
-                  transition: "transform 0.5s ease, opacity 0.5s ease, box-shadow 0.5s ease",
-                  transform: `translateX(${offset * 60}px) scale(${scale}) rotateY(${rotateY}deg)`,
-                  opacity,
-                  zIndex: i === currentIndex ? 10 : 1,
-                }}
-                className="tour-card"
-              >
-                <img
-                  src={tour.image}
-                  alt={tour.title}
-                  style={{
-                    width: "100%",
-                    height: "80%",
-                    objectFit: "cover",
-                    borderRadius: "15px",
-                    marginBottom: "10px",
-                    transition: "transform 0.5s, box-shadow 0.5s",
-                  }}
-                />
-                <h3
-                  style={{
-                    color: "#DFDB8",
-                    textAlign: "center",
-                    fontWeight: "600",
-                    fontSize: "1.2rem",
-                  }}
-                >
-                  {tour.title}
-                </h3>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Right Arrow */}
-        <button
-          onClick={nextSlide}
-          disabled={currentIndex === tours.length - 1}
-          style={arrowStyle("right", currentIndex === tours.length - 1)}
+      {/* Bohol Section */}
+      <div style={{ marginBottom: "80px", position: "relative", zIndex: 1 }}>
+        <h2
+          style={{
+            fontSize: "2rem",
+            marginBottom: "30px",
+            textAlign: "center",
+            color: "#DFDB8",
+            fontWeight: "700",
+          }}
         >
-          ▶
-        </button>
+          Bohol Tours
+        </h2>
+        {renderMarquee(
+          tours.filter((t) => t.location === "Bohol"),
+          "right",
+          50
+        )}
       </div>
 
       {/* Zoom Overlay */}
       {zoomed && (
         <div
-          onClick={() => setZoomed(false)}
+          onClick={() => setZoomed(null)}
           style={{
             position: "fixed",
             top: 0,
             left: 0,
             width: "100vw",
             height: "100vh",
-            background: "rgba(255, 255, 255, 0.95)",
+            background: "rgba(0,0,0,0.85)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
             cursor: "zoom-out",
             zIndex: 9999,
+            animation: "fadeIn 0.3s ease",
           }}
         >
           <img
-            src={tours[currentIndex].image}
+            src={zoomed}
             alt="Zoomed Tour"
             style={{
               maxWidth: "90%",
               maxHeight: "90%",
-              borderRadius: "15px",
-              boxShadow: "0 0 60px rgba(255,32,78,0.6)",
-              transition: "transform 0.3s",
+              borderRadius: "20px",
+              boxShadow: "0 0 60px rgba(0,229,255,0.5)",
             }}
           />
         </div>
       )}
 
-      {/* Card Hover Glow */}
       <style>{`
-        .tour-card:hover {
-          transform: scale(1.08) rotateY(0deg);
-          box-shadow: 0 20px 50px rgba(255,32,78,0.4), 0 0 30px rgba(160,21,62,0.3);
-          transition: transform 0.7s ease, box-shadow 1s ease;
+        .marquee {
+          gap: 30px;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+        }
+
+        .marquee.scrollLeft { animation-name: scrollLeft; }
+        .marquee.scrollRight { animation-name: scrollRight; }
+
+        .marquee:hover { animation-play-state: paused; }
+
+        @keyframes scrollLeft {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+
+        @keyframes scrollRight {
+          0% { transform: translateX(-50%); }
+          100% { transform: translateX(0); }
+        }
+
+        .marquee div:hover {
+          transform: scale(1.08);
+          box-shadow: 0 25px 60px rgba(0,229,255,0.5), 0 0 30px rgba(0,180,255,0.3);
+          background: rgba(255,255,255,0.15);
+        }
+
+        ::-webkit-scrollbar { display: none; }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        @media (max-width: 900px) {
+          .marquee div { width: 220px; height: 300px; }
         }
       `}</style>
     </section>
   );
 }
-
-// Arrow button styling
-// Arrow button styling
-const arrowStyle = (side, disabled) => ({
-  position: "absolute",
-  [side]: "-60px", // move outside of the slider container
-  top: "50%",
-  transform: "translateY(-50%)",
-  fontSize: "2rem",
-  background: "#DFDB8",
-  border: "none",
-  borderRadius: "50%",
-  cursor: disabled ? "not-allowed" : "pointer",
-  color: "rgb(93,14,65)",
-  opacity: disabled ? 0.3 : 1,
-  fontWeight: "bold",
-  zIndex: 999, // make sure it's above everything
-  transition: "all 0.3s ease",
-});
