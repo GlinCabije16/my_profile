@@ -53,7 +53,7 @@ export default function ToursDynamicSlider() {
 
     const initDiamonds = () => {
       diamonds = [];
-      for (let i = 0; i < 80; i++) diamonds.push(new Diamond());
+      for (let i = 0; i < 100; i++) diamonds.push(new Diamond());
     };
 
     const animate = () => {
@@ -138,13 +138,18 @@ export default function ToursDynamicSlider() {
   return (
     <section
       style={{
-        minHeight: "100vh",
+        width: "100vw",
+        height: "100vh",
         padding: "50px 20px",
         fontFamily: "'Poppins', sans-serif",
         background: "#0b2833",
         color: "#fff",
         position: "relative",
         overflow: "hidden",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        gap: "60px",
       }}
     >
       {/* Canvas for floating diamonds */}
@@ -162,7 +167,7 @@ export default function ToursDynamicSlider() {
       />
 
       {/* Cebu Section */}
-      <div style={{ marginBottom: "80px", position: "relative", zIndex: 1 }}>
+      <div style={{ width: "100%", position: "relative", zIndex: 1 }}>
         <h2
           style={{
             fontSize: "2rem",
@@ -174,15 +179,11 @@ export default function ToursDynamicSlider() {
         >
           Cebu Tours
         </h2>
-        {renderMarquee(
-          tours.filter((t) => t.location === "Cebu"),
-          "left",
-          35
-        )}
+        {renderMarquee(tours.filter((t) => t.location === "Cebu"), "left", 35)}
       </div>
 
       {/* Bohol Section */}
-      <div style={{ marginBottom: "80px", position: "relative", zIndex: 1 }}>
+      <div style={{ width: "100%", position: "relative", zIndex: 1 }}>
         <h2
           style={{
             fontSize: "2rem",
@@ -194,11 +195,7 @@ export default function ToursDynamicSlider() {
         >
           Bohol Tours
         </h2>
-        {renderMarquee(
-          tours.filter((t) => t.location === "Bohol"),
-          "right",
-          50
-        )}
+        {renderMarquee(tours.filter((t) => t.location === "Bohol"), "right", 50)}
       </div>
 
       {/* Zoom Overlay */}
@@ -239,37 +236,31 @@ export default function ToursDynamicSlider() {
           animation-timing-function: linear;
           animation-iteration-count: infinite;
         }
-
         .marquee.scrollLeft { animation-name: scrollLeft; }
         .marquee.scrollRight { animation-name: scrollRight; }
-
         .marquee:hover { animation-play-state: paused; }
-
-        @keyframes scrollLeft {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-
-        @keyframes scrollRight {
-          0% { transform: translateX(-50%); }
-          100% { transform: translateX(0); }
-        }
-
+        @keyframes scrollLeft { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        @keyframes scrollRight { 0% { transform: translateX(-50%); } 100% { transform: translateX(0); } }
         .marquee div:hover {
           transform: scale(1.08);
           box-shadow: 0 25px 60px rgba(0,229,255,0.5), 0 0 30px rgba(0,180,255,0.3);
           background: rgba(255,255,255,0.15);
         }
-
         ::-webkit-scrollbar { display: none; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+        /* Responsive */
+        @media (max-width: 1024px) {
+          .marquee div { width: 2200px; height: 300px; }
+          h2 { font-size: 1.8rem; }
         }
-
-        @media (max-width: 900px) {
-          .marquee div { width: 220px; height: 300px; }
+        @media (max-width: 600px) {
+          .marquee div { width: 180px; height: 250px; }
+          h2 { font-size: 1.5rem; }
+        }
+        @media (max-width: 400px) {
+          .marquee div { width: 140px; height: 200px; }
+          h2 { font-size: 1.2rem; }
         }
       `}</style>
     </section>

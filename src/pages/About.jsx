@@ -6,7 +6,7 @@ export default function AboutCubeGlass() {
   const cubeRef = useRef(null);
 
   const details = [
-    { icon: <FaUser color="#3fa9f5" />, title: "About Me", content: "Hi! I'm Angeline Cabije, aspiring Fullstack Developer creating clean, responsive web apps." },
+    { icon: <FaUser color="#3fa9f5" />, title: "About Me", content: "Aspiring Fullstack Developer and UI/UX Designer with a passion for creating user-friendly web applications and engaging digital experiences. Eager to learn modern development technologies, design principles, and networking fundamentals while building practical skills through projects and internships." },
     { icon: <FaGraduationCap color="#3fa9f5" />, title: "Education", content: "BSIT - Holy Cross of Davao College" },
     { icon: <FaLaptopCode color="#3fa9f5" />, title: "Programming Languages", content: "JavaScript, React, Node.js, SQL, Django, PHP, Python, C++, C#, Java" },
     { icon: <FaBasketballBall color="#3fa9f5" />, title: "Hobbies", content: "Basketball, Guitar, Digital Art and Painting" },
