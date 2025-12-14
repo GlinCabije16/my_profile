@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 
 export default function Navbar() {
   const [active, setActive] = useState("home");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const navItems = [
     { id: "home", label: "Home" },
@@ -18,27 +20,32 @@ export default function Navbar() {
     if (section) {
       section.scrollIntoView({ behavior: "smooth" });
       setActive(id);
+      setMenuOpen(false); // close menu on mobile
     }
   };
 
-  // Observe sections to update active nav link
+  // Detect screen size
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Update active link on scroll
   useEffect(() => {
     const handleScroll = () => {
-      let current = "home"; // default section
+      let current = "home";
       navItems.forEach((item) => {
         const section = document.getElementById(item.id);
-        if (section) {
-          const top = section.getBoundingClientRect().top;
-          if (top <= window.innerHeight / 2) {
-            current = item.id;
-          }
+        if (section && section.getBoundingClientRect().top <= window.innerHeight / 2) {
+          current = item.id;
         }
       });
       setActive(current);
     };
 
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); // set initial active section
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -47,24 +54,52 @@ export default function Navbar() {
       style={{
         position: "fixed",
         top: 0,
-        right: 0,
         width: "100%",
-        padding: "20px 50px",
+        padding: "15px 30px",
         zIndex: 200,
-        display: "flex",
-        justifyContent: "center",
-        background: "rgba(0, 0, 0, 0.25)",
+        background: "rgba(0,0,0,0.25)",
         backdropFilter: "blur(12px)",
         boxShadow: "0 4px 20px rgba(0,0,0,0.25)",
       }}
     >
-      <ul
+      {/* Top bar */}
+      <div
         style={{
           display: "flex",
-          gap: "25px",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <h3 style={{ color: "#fff", margin: 0 }}>My Portfolio</h3>
+
+        {/* Hamburger */}
+        {isMobile && (
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            style={{
+              fontSize: "1.8rem",
+              background: "none",
+              border: "none",
+              color: "#fff",
+              cursor: "pointer",
+            }}
+          >
+            ☰
+          </button>
+        )}
+      </div>
+
+      {/* Menu */}
+      <ul
+        style={{
           listStyle: "none",
-          margin: 0,
           padding: 0,
+          marginTop: isMobile ? "15px" : "0",
+          display: isMobile ? (menuOpen ? "flex" : "none") : "flex",
+          flexDirection: isMobile ? "column" : "row",
+          gap: "20px",
+          justifyContent: "center",
+          alignItems: "center",
         }}
       >
         {navItems.map((item) => (
@@ -75,16 +110,15 @@ export default function Navbar() {
                 background: "transparent",
                 border: "none",
                 fontSize: "1rem",
-                color: active === item.id ? "#00eaff" : "#ffffff",
+                color: active === item.id ? "#00eaff" : "#fff",
                 fontWeight: active === item.id ? "700" : "500",
                 cursor: "pointer",
-                transition: "0.3s ease",
                 paddingBottom: "5px",
-                borderBottom: active === item.id ? "3px solid #00eaff" : "3px solid transparent",
-              }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#00eaff")}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.color = active === item.id ? "#00eaff" : "#ffffff";
+                borderBottom:
+                  active === item.id
+                    ? "3px solid #00eaff"
+                    : "3px solid transparent",
+                transition: "0.3s ease",
               }}
             >
               {item.label}
